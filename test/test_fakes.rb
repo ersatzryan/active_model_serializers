@@ -193,6 +193,6 @@ end
 
 class ArraySerializerWithSerializerFor < ActiveModel::ArraySerializer
   def serializer_for(item)
-    item.attributes[:author] == "Author1" ? PostSerializer : CustomPostSerializer
+    item.attributes[:author] == current_user ? PostSerializer : CustomPostSerializer
   end
 end

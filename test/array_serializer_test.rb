@@ -53,16 +53,18 @@ class ArraySerializerTest < ActiveModel::TestCase
   end
 
   def test_array_serializer_with_serialize_for_method
+    current_user = "Author1"
     post1 = Post.new(:title => "Post1", :author => "Author1", :id => 1, :body => "Post1 Body")
     post2 = Post.new(:title => "Post2", :author => "Author2", :id => 2, :body => "Post2 Body")
 
     array = [post1, post2]
 
-    serializer = ArraySerializerWithSerializerFor.new(array)
+    serializer = ArraySerializerWithSerializerFor.new(array, :scope_name => :current_user, :scope => current_user)
 
     assert_equal([
       { :title => "Post1", :body => "Post1 Body", :comments => []},
       { :title => "Post2" }
     ], serializer.as_json)
   end
+
 end

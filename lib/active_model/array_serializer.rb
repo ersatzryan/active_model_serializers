@@ -31,6 +31,13 @@ module ActiveModel
 
     def initialize(object, options={})
       @object, @options = object, options
+
+      scope_name = @options[:scope_name]
+      if scope_name && !respond_to?(scope_name)
+        self.class.class_eval do
+          define_method scope_name, lambda { scope }
+        end
+      end
     end
 
     def meta_key
@@ -39,6 +46,11 @@ module ActiveModel
 
     def include_meta(hash)
       hash[meta_key] = @options[:meta] if @options.has_key?(:meta)
+    end
+
+    # Returns options[:scope]
+    def scope
+      @options[:scope]
     end
 
     def as_json(*args)
