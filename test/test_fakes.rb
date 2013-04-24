@@ -1,4 +1,6 @@
 class Model
+  attr_reader :attributes
+
   def initialize(hash={})
     @attributes = hash
   end
@@ -186,5 +188,11 @@ class Attachment < Model
 
   def edible
     @attributes[:edible]
+  end
+end
+
+class ArraySerializerWithSerializerFor < ActiveModel::ArraySerializer
+  def serializer_for(item)
+    item.attributes[:author] == "Author1" ? PostSerializer : CustomPostSerializer
   end
 end

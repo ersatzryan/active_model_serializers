@@ -77,13 +77,7 @@ module ActiveModel
     private
     def _serializable_array
       @object.map do |item|
-        if @options.has_key? :each_serializer
-          serializer = @options[:each_serializer]
-        elsif item.respond_to?(:active_model_serializer)
-          serializer = item.active_model_serializer
-        end
-
-        serializable = serializer ? serializer.new(item, @options) : DefaultSerializer.new(item, @options)
+        serializable = _serializer(item).new(item, @options)
 
         if serializable.respond_to?(:serializable_hash)
           serializable.serializable_hash
@@ -92,6 +86,20 @@ module ActiveModel
         end
       end
     end
+
+    def _serializer(item)
+      serializer = serializer_for(item) if respond_to?(:serializer_for)
+
+      serializer ||=
+        if @options.has_key? :each_serializer
+          @options[:each_serializer]
+        elsif item.respond_to?(:active_model_serializer)
+          item.active_model_serializer
+        else
+          DefaultSerializer
+        end
+    end
+
 
     def expand_cache_key(*args)
       ActiveSupport::Cache.expand_cache_key(args)
